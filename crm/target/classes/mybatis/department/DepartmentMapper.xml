@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.crm.system.dao.DepartmentDao">
+
+    <select id="get" resultType="com.crm.system.domain.DepartmentDo">
+        select `id`,`departmentname`,contacts ,manager from
+        department where id = #{value}
+    </select>
+
+    <select id="list" resultType="com.crm.system.domain.DepartmentDo">
+        select `id`,`departmentname`,contacts ,manager
+        from department
+
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="departmentname != null and departmentname != ''">and departmentname LIKE CONCAT('%',#{departmentname},'%')</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from department
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="departmentname != null and departmentname != ''">and departmentname LIKE CONCAT('%',#{departmentname},'%')</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.crm.system.domain.DepartmentDo" useGeneratedKeys="true" keyProperty="id">
+        insert into department
+        (
+        `departmentname`
+        ,contacts
+         ,manager
+        )
+        values
+        (
+        #{departmentname}
+        ,#{contacts}
+        ,#{manager}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.crm.system.domain.DepartmentDo">
+        update department
+        <set>
+            <if test="departmentname != null">`departmentname` = #{departmentname},</if>
+            <if test="contacts != null">`contacts` = #{contacts},</if>
+            <if test="manager != null">`manager` = #{manager}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="remove">
+        delete from department where id = #{value}
+    </delete>
+
+
+</mapper>
